@@ -46,46 +46,46 @@ export class TodoAccess {
     return newTodo
   }
 
-  //   async updateTodo({ userId, todoId, updatedTodo }) {
-  //     logger.info('Updating todo item', { userId, todoId, updatedTodo })
+  async updateTodo({ userId, todoId, updatedTodo }) {
+    logger.info('Updating todo item', { userId, todoId, updatedTodo })
 
-  //     const command = new UpdateCommand({
-  //       TableName: this.todosTable,
-  //       Key: { userId, todoId },
-  //       ConditionExpression: 'attribute_exists(todoId)',
-  //       UpdateExpression: 'set done = :done',
-  //       ExpressionAttributeValues: {
-  //         ':done': updatedTodo.done
-  //       }
-  //     })
+    const command = new UpdateCommand({
+      TableName: this.todosTable,
+      Key: { userId, todoId },
+      ConditionExpression: 'attribute_exists(todoId)',
+      UpdateExpression: 'set done = :done',
+      ExpressionAttributeValues: {
+        ':done': updatedTodo.done
+      }
+    })
 
-  //     await this.dynamoDBDocument.send(command)
-  //   }
+    await this.dynamoDBDocument.send(command)
+  }
 
-  //   async deleteTodo({ userId, todoId }) {
-  //     logger.info('Deleting todo item', { userId, todoId })
+  async deleteTodo({ userId, todoId }) {
+    logger.info('Deleting todo item', { userId, todoId })
 
-  //     const command = new DeleteCommand({
-  //       TableName: this.todosTable,
-  //       Key: { userId, todoId }
-  //     })
+    const command = new DeleteCommand({
+      TableName: this.todosTable,
+      Key: { userId, todoId }
+    })
 
-  //     await this.dynamoDBDocument.send(command)
-  //   }
+    await this.dynamoDBDocument.send(command)
+  }
 
-  //   async saveImgUrl({ userId, todoId, attachmentUrl }) {
-  //     logger.info('Updating todo item image', { userId, todoId, attachmentUrl })
+  async saveImgUrl({ userId, todoId, attachmentUrl }) {
+    logger.info('Updating todo item image', { userId, todoId, attachmentUrl })
 
-  //     const command = new UpdateCommand({
-  //       TableName: this.todosTable,
-  //       Key: { userId, todoId },
-  //       ConditionExpression: 'attribute_exists(todoId)',
-  //       UpdateExpression: 'set attachmentUrl = :attachmentUrl',
-  //       ExpressionAttributeValues: {
-  //         ':attachmentUrl': attachmentUrl
-  //       }
-  //     })
+    const command = new UpdateCommand({
+      TableName: this.todosTable,
+      Key: { userId, todoId },
+      ConditionExpression: 'attribute_exists(todoId)',
+      UpdateExpression: 'set attachmentUrl = :attachmentUrl',
+      ExpressionAttributeValues: {
+        ':attachmentUrl': attachmentUrl
+      }
+    })
 
-  //     await this.dynamoDBDocument.send(command)
-  //   }
+    await this.dynamoDBDocument.send(command)
+  }
 }

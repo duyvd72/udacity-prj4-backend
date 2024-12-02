@@ -1,6 +1,7 @@
 import Axios from 'axios'
 import jsonwebtoken from 'jsonwebtoken'
 import { createLogger } from '../../utils/logger.mjs'
+import jwkToPem from 'jwk-to-pem'
 
 const logger = createLogger('auth')
 
@@ -48,21 +49,41 @@ async function verifyToken(authHeader) {
   const jwt = jsonwebtoken.decode(token, { complete: true })
 
   // TODO: Implement token verification
-  const res = await Axios.get(jwksUrl)
-  const keys = res.data.keys
-  const signingKeys = keys?.find((key) => key.kid === jwt.header.kid)
+  if (!jwt) throw new Error('Invalid token')
 
-  if (!signingKeys) {
-    throw new Error('No key found in JWKS endpoint')
+  const { kid } = jwt.header
+
+  const jwks = await Axios.get(jwksUrl)
+  const signingKeys = jwks.data.keys.find((key) => key.kid === kid)
+
+  if (!signingKeys) throw new Error('No key found in JWKS endpoint')
+
+  const pem = jwkToPem(signingKeys)
+
+  try {
+    const verifiedToken = jsonwebtoken.verify(token, pem, {
+      algorithms: ['RS256']
+    })
+    return verifiedToken
+  } catch (err) {
+    throw new Error('Token verification failed')
   }
 
-  const pem = signingKeys?.x5c[0]
+  // const res = await Axios.get(jwksUrl)
+  // const keys = res.data.keys
+  // const signingKeys = keys?.find((key) => key.kid === jwt.header.kid)
 
-  const certificate = `=====Start Certificate=====\n${pem}\n=====End Certificate=====`
+  // if (!signingKeys) {
+  //   throw new Error('No key found in JWKS endpoint')
+  // }
 
-  const verifiedToken = verify(token, certificate, { algorithms: ['RS256'] })
+  // const pem = signingKeys?.x5c[0]
 
-  return verifiedToken
+  // const certificate = `-----BEGIN CERTIFICATE-----\n${pem}\n-----END CERTIFICATE-----`
+
+  // const verifiedToken = verify(token, certificate, { algorithms: ['RS256'] })
+
+  // return verifiedToken
 }
 
 function getToken(authHeader) {
